@@ -1,0 +1,201 @@
+<!-- HEADER -->
+<!--
+  Le he quitado la clase 'class.="... (tus clases)"' y he restaurado las originales
+  junto con el estilo de fuente.
+-->
+<div class="p-3 flex items-center bg-blue-900 shadow-md sticky top-0 z-40"
+  style="font-family: 'Times New Roman', Times, serif;">
+  <img src="escudo_JMB.jpeg" alt="logo" class="w-14 h-auto object-contain drop-shadow-md" />
+
+  <nav class="flex flex-1 ml-6 gap-6 text-white font-medium text-lg select-none cursor-pointer flex-wrap items-center">
+
+    <!-- === 1. ENLACES PÚBLICOS (Siempre visibles) === -->
+    <div routerLink="/home" id="home-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Home
+    </div>
+    <div routerLink="/cont" id="quienes-somos-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Quienes Somos
+    </div>
+
+    <!-- === 2. ENLACES PROTEGIDOS (Visibles por Rol) === -->
+
+    <!--
+      Usamos authService (que hicimos 'public' en el .ts) para llamar a hasRole()
+    -->
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/UserGes" id="gestion-usuarios-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestión de Usuarios
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/Roles" id="gestion-roles-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestión de Roles
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/Menus" id="gestion-menus-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestión de Menus
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/AsignacionProcesosMenus"
+      id="gestion-menus-procesos-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Asignacion Procesos a menu
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/AsignacionRolesMenus" id="gestion-menus-roles-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Asignacion Roles a menu
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/AsignacionRolesUsuarios"
+      id="gestion-menus-roles-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Asignacion Roles a usuarios
+    </div>
+
+    <!--
+      Usamos hasAnyRole para rutas que aceptan más de un rol
+      (Asegúrate que esto coincida con tu app-routing.module.ts)
+    -->
+    <div *ngIf="authService.hasAnyRole(['Administrador', 'Docente'])" routerLink="/paralelos"
+      id="gestion-parlalelos-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion de paralelos
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/items" id="gestion-items-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion de items
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/materias" id="gestion-materias-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion de materias
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/niveles" id="gestion-niveles-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion de niveles
+    </div>
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/modalidad" id="gestion-modalidad-link"
+      class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion de modalidad
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/asignardicta"
+      id="gestion-asignarmateriasprofesor-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion asignar materias profesor
+    </div>
+
+    <div *ngIf="authService.hasRole('Administrador')" routerLink="/inscripcionAlumnos"
+      id="gestion-asignarmateriasalumno-link" class="pb-1 border-b border-transparent hover:border-white transition">
+      Gestion asignar materias alumno
+    </div>
+
+    <!-- Select de Roles (Solo visible si estás logueado) -->
+    <select *ngIf="authService.isLoggedIn()" name="roles" id="roles"
+      class="ml-auto min-w-[160px] bg-blue-800 text-white rounded-lg px-3 py-1 border border-white/20 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white transition"
+      [ngModel]="selectedRole" (ngModelChange)="selectRole($event)">
+      <!-- <option [ngValue]="null" disabled>Roles</option> -->
+      <!-- Deshabilitado para que siempre haya uno seleccionado -->
+      <!-- Si no hay login, el *ngIf="!login" del original ya no es necesario -->
+      <option *ngFor="let rol of login?.roles" [value]="rol">{{ rol.nombre }}</option>
+    </select>
+  </nav>
+</div>
+
+<!-- HOME (Sin cambios) -->
+<div class="content bg-blue-950 text-white min-h-screen"
+  style="padding-top: 90px; padding-bottom: 90px; font-family: 'Times New Roman', Times, serif;">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- FOOTER (Corregido para usar authService) -->
+<div
+  class="bg-blue-900 fixed bottom-0 w-full flex justify-between items-center px-6 py-3 shadow-inner border-t border-white/20"
+  style="font-family: 'Times New Roman', Times, serif;">
+  <div>
+    <span class="text-white font-semibold">
+      <!-- ✅ Lógica actualizada con authService -->
+      <ng-container *ngIf="!authService.isLoggedIn()">Usuario: Invitado</ng-container>
+      <ng-container *ngIf="authService.isLoggedIn()">Usuario: {{ login?.nombre }}</ng-container>
+    </span>
+  </div>
+
+  <div>
+    <span class="text-sm text-white/70">Leonela Condori Gudiño</span>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <span class="text-white/90">
+      <!-- Mantenemos tu lógica de fechas -->
+      <ng-container *ngIf="!login">
+        {{ fechaActual | date:"EEEE, d 'de' MMMM 'de' y" }}
+      </ng-container>
+      <ng-container *ngIf="login">
+        {{ login.fecha | date:"EEEE, d 'de' MMMM 'de' y " }}
+      </ng-container>
+    </span>
+
+
+    <!-- ✅ Botones de sesión actualizados con authService -->
+    <button *ngIf="!authService.isLoggedIn()"
+      class="bg-white text-blue-900 px-3 py-1.5 rounded-md text-sm font-semibold shadow hover:bg-gray-100 focus:ring-2 focus:ring-white transition"
+      (click)="openModal()">
+      Conectar Usuario
+    </button>
+
+    <button *ngIf="authService.isLoggedIn()"
+      class="bg-white/10 border border-white/30 text-white px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-white/20 focus:ring-2 focus:ring-white transition"
+      (click)="logout()">
+      Desconectar Usuario
+    </button>
+  </div>
+</div>
+
+<!-- MODAL DE LOGIN (Sin cambios) -->
+<!-- El *ngIf="modalOpen" controla su visibilidad -->
+<div *ngIf="modalOpen" class="fixed inset-0 z-50" style="font-family: 'Times New Roman', Times, serif;">
+  <!-- Fondo -->
+  <div class="absolute inset-0 bg-blue-950/70 backdrop-blur-sm"></div>
+
+  <!-- Contenedor centrado -->
+  <div class="relative min-h-full flex items-center justify-center p-4">
+    <form class="w-full max-w-md bg-blue-900 text-white rounded-2xl shadow-2xl p-6 border border-white/30"
+      (ngSubmit)="ingreso_sistema()">
+      <div class="flex justify-between items-center mb-4">
+        <h4 class="text-xl font-bold tracking-wide">INICIAR SESIÓN</h4>
+        <button type="button" class="text-white/80 hover:text-white focus:outline-none" (click)="cancelar()"
+          aria-label="Cerrar modal">
+          ✕
+        </button>
+      </div>
+
+      <div class="mb-4">
+        <label class="block mb-1 font-semibold">Usuario</label>
+        <input type="text" [(ngModel)]="usuario" name="usuario"
+          class="w-full px-3 py-2 rounded-lg border border-white/40 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-blue-950/30"
+          autocomplete="username" required placeholder="Ingresa tu usuario" />
+      </div>
+
+      <div class="mb-6">
+        <label class="block mb-1 font-semibold">Password</label>
+        <input type="password" [(ngModel)]="password" name="password"
+          class="w-full px-3 py-2 rounded-lg border border-white/40 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-blue-950/30"
+          autocomplete="current-password" required placeholder="••••••••" />
+      </div>
+
+      <div class="flex gap-3">
+        <button type="submit"
+          class="flex-1 bg-white text-blue-900 font-bold px-4 py-2 rounded-lg shadow hover:bg-gray-100 focus:ring-2 focus:ring-white transition">
+          Ingresar
+        </button>
+        <button type="button"
+          class="bg-transparent border border-white/50 px-4 py-2 rounded-lg text-white hover:bg-white/10 focus:ring-2 focus:ring-white transition"
+          (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
