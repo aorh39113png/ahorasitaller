@@ -1,0 +1,150 @@
+<div class="bg-gradient-to-b from-blue-50 to-white text-blue-900 py-12 px-6 rounded-xl shadow-lg font-[Times_New_Roman]">
+  <div class="max-w-7xl mx-auto"> <!-- Ancho mayor -->
+
+    <!-- Título -->
+    <h2 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-6 border-b-4 border-blue-800/60 pb-2 tracking-tight">
+      Gestión Asignación Materias-Profesor
+    </h2>
+
+    <!-- Filtros -->
+    <div class="flex flex-col md:flex-row items-center gap-4 mb-8 flex-wrap">
+
+      <!-- Filtro 1: Texto (Profesor o Materia) -->
+      <div class="flex items-center gap-2 flex-1 w-full">
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          (keyup.enter)="onFiltroChange()"
+          placeholder="Filtrar por Materia o Profesor..."
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/50 bg-white"
+        />
+      </div>
+
+      <!-- Filtro 2: Nivel (Dropdown) -->
+      <select
+        [(ngModel)]="filtroNivel"
+        (change)="onFiltroChange()"
+        class="px-3 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none bg-white text-blue-900"
+      >
+        <option [value]="0">Todos los Niveles</option>
+        <option *ngFor="let n of listaNivelesActivos" [value]="n.codn">
+          {{ n.nombre }}
+        </option>
+      </select>
+
+      <!-- Filtro 3: Estado -->
+      <div class="flex gap-4 items-center">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="TODOS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Todos</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="ACTIVOS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Activos</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="BAJAS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Bajas</span>
+        </label>
+      </div>
+
+      <!-- Botón nuevo -->
+      <button
+        (click)="abrirModalNuevo()"
+        class="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-full shadow-md flex items-center gap-2 transition"
+      >
+        <i class="fa-solid fa-plus"></i>
+        <span class="hidden md:inline">Nueva Asignación</span>
+      </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="overflow-x-auto shadow-xl rounded-xl ring-1 ring-blue-900/20">
+      <table class="w-full bg-white divide-y divide-blue-100">
+        <thead class="bg-blue-900/95">
+          <tr>
+            <th class="px-6 py-3 text-left text-white font-bold uppercase tracking-wide">Nivel</th>
+            <th class="px-6 py-3 text-left text-white font-bold uppercase tracking-wide">Materia</th>
+            <th class="px-6 py-3 text-left text-white font-bold uppercase tracking-wide">Profesor</th>
+            <th class="px-6 py-3 text-left text-white font-bold uppercase tracking-wide">Paralelo</th>
+            <th class="px-6 py-3 text-center text-white font-bold uppercase tracking-wide">Estado</th>
+            <th class="px-6 py-3 text-center text-white font-bold uppercase tracking-wide">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-blue-100">
+          <tr *ngFor="let d of asignaciones" class="odd:bg-blue-50 even:bg-white hover:bg-blue-100/70 transition">
+
+            <td class="px-6 py-3 text-blue-800 font-medium">{{ d.materia.nivel.nombre }}</td>
+            <td class="px-6 py-3 text-blue-950 font-medium">{{ d.materia.nombre }}</td>
+            <td class="px-6 py-3 text-blue-950 font-medium">{{ d.profesor.ap }} {{ d.profesor.am }} {{ d.profesor.nombre }}</td>
+            <td class="px-6 py-3 text-blue-800 font-medium">{{ d.paralelo.nombre }}</td>
+
+            <!-- Estado -->
+            <td class="px-6 py-3 text-center">
+              <i *ngIf="d.estado === 1" class="fa-solid fa-thumbs-up text-green-600 fa-lg" title="Activo"></i>
+              <i *ngIf="d.estado === 0" class="fa-solid fa-thumbs-down text-red-600 fa-lg" title="Inactivo"></i>
+            </td>
+
+            <!-- Acciones (M, B) -->
+            <td class="px-6 py-3 flex justify-center gap-3">
+              <!-- Habilitar (no está en la UI, pero es útil) -->
+              <button *ngIf="d.estado === 0" title="Habilitar" (click)="confirmarHabilitar(d)"
+                class="p-2 rounded-full bg-blue-900 hover:bg-blue-800 text-white shadow-md transition">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+
+              <!-- Dar baja (B) -->
+              <button *ngIf="d.estado === 1" title="Dar baja" (click)="confirmarEliminar(d)"
+                class="p-2 rounded-full bg-blue-900/90 hover:bg-blue-800 text-white shadow-md transition">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+
+              <!-- Modificar (M) - La UI no lo soporta (B-16.2), solo mostramos los datos -->
+              <button title="Ver/Modificar" (click)="abrirModalEditar(d)"
+                class="p-2 rounded-full bg-blue-800 hover:bg-blue-700 text-white shadow-md transition">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Paginación -->
+      <div class="flex justify-center items-center gap-3 mt-6 pb-6" *ngIf="totalPaginas > 1">
+        <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">‹</button>
+        <ng-container *ngFor="let pagina of [].constructor(totalPaginas); let i = index">
+          <button
+            (click)="cambiarPagina(i + 1)"
+            [class.bg-blue-900]="paginaActual === i + 1"
+            [class.text-white]="paginaActual === i + 1"
+            class="px-3 py-1 rounded-lg font-semibold bg-blue-100 text-blue-900 hover:bg-blue-200"
+          >
+            {{ i + 1 }}
+          </button>
+        </ng-container>
+        <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">›</button>
+      </div>
+    </div>
+
+    <!-- Modales -->
+    <app-modal-asignacion-dicta
+      *ngIf="modalVisible"
+      [modoEdicion]="modoEdicion"
+      [gestion]="gestionActual"
+      [listaMapas]="listaMapasActivos"
+      [listaProfesores]="listaProfesoresActivos"
+      [asignacionData]="asignacionSeleccionada"
+      (cerrar)="cerrarModal()"
+      (guardar)="guardarAsignacion($event)"
+    ></app-modal-asignacion-dicta>
+
+    <!-- Modal de Confirmación B-4 -->
+    <app-modal-confirmacion
+      *ngIf="modalConfirmVisible"
+      [mensaje]="mensajeConfirmacion"
+      (cerrar)="cerrarModalConfirmacion()"
+      (aceptar)="ejecutarConfirmacion()">
+    </app-modal-confirmacion>
+
+  </div>
+</div>

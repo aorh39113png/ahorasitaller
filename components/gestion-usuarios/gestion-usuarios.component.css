@@ -1,0 +1,125 @@
+:host {
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  font-size: 0.95rem;
+}
+select, input {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+#print-area {
+  display: none;
+}
+
+/* Estilos para la tabla de impresión */
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0b1120 !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #print-area,
+  #print-area * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #print-area {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    padding: 32px;
+    background: #ffffff !important;
+    color: #0b1120 !important;
+    z-index: 9999;
+  }
+
+  .print-wrapper {
+    font-family: "Times New Roman", Times, serif;
+    color: #0b1120;
+  }
+
+  .print-title {
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 22px;
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-single-user {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .print-table th,
+  .print-table td {
+    border: 1px solid #0f172a;
+    padding: 8px;
+    font-size: 13px;
+    vertical-align: top;
+    background: #ffffff;
+  }
+
+  .print-col-num {
+    width: 48px;
+    text-align: center;
+  }
+
+  .print-col-photo {
+    width: 160px;
+    text-align: center;
+  }
+
+  .print-col-photo img {
+    width: 120px;
+    height: 140px;
+    object-fit: cover;
+    border: 1px solid #0f172a;
+    border-radius: 6px;
+  }
+
+  .print-col-data {
+    width: calc(100% - 160px);
+    color: #0b1120;
+  }
+
+  .print-nombre {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+
+  .print-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+
+  .print-label {
+    min-width: 160px;
+    font-weight: 700;
+  }
+
+  .print-value {
+    flex: 1;
+  }
+}
+

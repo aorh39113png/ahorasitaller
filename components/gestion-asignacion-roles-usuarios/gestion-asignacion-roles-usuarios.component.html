@@ -1,0 +1,121 @@
+<div class="bg-gradient-to-b from-blue-50 to-white text-blue-900 py-12 px-6 rounded-xl shadow-lg font-[Times_New_Roman]">
+  <div class="max-w-7xl mx-auto">
+
+    <h2 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-6 border-b-4 border-blue-800/60 pb-2 tracking-tight">
+      Asignación Roles a Usuario:
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-blue-900/10">
+        <h3 class="text-2xl font-bold text-blue-900 mb-4">Lista de Usuarios</h3>
+
+        <input
+          type="text"
+          [(ngModel)]="usuarioFiltro"
+          (keyup.enter)="cargarUsuarios()"
+          placeholder="Filtrar por nombre o apellido..."
+          class="w-full px-4 py-2 mb-4 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900"
+        />
+
+        <div class="overflow-y-auto h-96">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-blue-50">
+                <th class="p-2 w-10">#</th>
+                <th class="p-2 text-left">Lista de Usuarios</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let usuario of usuarios" class="border-b border-blue-100 hover:bg-blue-50">
+                <td class="p-3 text-center">
+                  <input
+                    type="radio"
+                    name="usuarioSeleccionado"
+                    [value]="usuario.login"
+                    [(ngModel)]="usuarioSeleccionadoLogin"
+                    (change)="onUsuarioSelected()"
+                    class="accent-blue-900 h-5 w-5"
+                  />
+                </td>
+                <td class="p-3 font-medium">
+                  {{ usuario.personal.ap }} {{ usuario.personal.am }} {{ usuario.personal.nombre }} ({{ usuario.login }})
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-center items-center gap-3 mt-4" *ngIf="totalPaginasUsuario > 1">
+          <button (click)="cambiarPaginaUsuario(paginaActualUsuario - 1)" [disabled]="paginaActualUsuario === 1" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">‹</button>
+          <span>Pág {{ paginaActualUsuario }} de {{ totalPaginasUsuario }}</span>
+          <button (click)="cambiarPaginaUsuario(paginaActualUsuario + 1)" [disabled]="paginaActualUsuario === totalPaginasUsuario" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">›</button>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-blue-900/10">
+        <h3 class="text-2xl font-bold text-blue-900 mb-4">Lista de Roles</h3>
+
+        <div class="flex gap-4 mb-4">
+          <input
+            type="text"
+            [(ngModel)]="rolFiltro"
+            (keyup.enter)="cargarRoles()"
+            placeholder="Filtrar Roles..."
+            class="flex-1 px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900"
+            [disabled]="!usuarioSeleccionadoLogin"
+          />
+
+          <div class="flex gap-3 items-center">
+            <label class="flex items-center gap-1">
+              <input type="radio" value="TODOS" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!usuarioSeleccionadoLogin"> Todos
+            </label>
+            <label class="flex items-center gap-1">
+              <input type="radio" value="SI" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!usuarioSeleccionadoLogin"> SI Asignados
+            </label>
+            <label class="flex items-center gap-1">
+              <input type="radio" value="NO" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!usuarioSeleccionadoLogin"> NO Asignados
+            </label>
+          </div>
+        </div>
+
+        <div class="overflow-y-auto h-96">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-blue-50">
+                <th class="p-2 w-10">#</th>
+                <th class="p-2 text-left">Lista de Roles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="!usuarioSeleccionadoLogin">
+                <td colspan="2" class="p-6 text-center text-gray-500">
+                  Seleccione un Usuario de la izquierda para ver los roles.
+                </td>
+              </tr>
+
+              <tr *ngFor="let rol of roles" class="border-b border-blue-100 hover:bg-blue-50">
+                <td class="p-3 text-center">
+                  <input
+                    type="checkbox"
+                    [checked]="rol.asignado"
+                    (change)="onRolToggle(rol, $event)"
+                    class="accent-blue-900 h-5 w-5"
+                  />
+                </td>
+                <td class="p-3 font-medium">{{ rol.nombre }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-center items-center gap-3 mt-4" *ngIf="totalPaginasRol > 1">
+          <button (click)="cambiarPaginaRol(paginaActualRol - 1)" [disabled]="paginaActualRol === 1" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">‹</button>
+          <span>Pág {{ paginaActualRol }} de {{ totalPaginasRol }}</span>
+          <button (click)="cambiarPaginaRol(paginaActualRol + 1)" [disabled]="paginaActualRol === totalPaginasRol" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">›</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

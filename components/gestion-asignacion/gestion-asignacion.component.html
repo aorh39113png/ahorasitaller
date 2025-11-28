@@ -1,0 +1,119 @@
+<div class="bg-gradient-to-b from-blue-50 to-white text-blue-900 py-12 px-6 rounded-xl shadow-lg font-[Times_New_Roman]">
+  <div class="max-w-7xl mx-auto">
+
+    <h2 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-6 border-b-4 border-blue-800/60 pb-2 tracking-tight">
+      Asignación Procesos a Menú:
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-blue-900/10">
+        <h3 class="text-2xl font-bold text-blue-900 mb-4">Lista de Menús</h3>
+
+        <input
+          type="text"
+          [(ngModel)]="menuFiltro"
+          (keyup.enter)="cargarMenus()"
+          placeholder="Filtrar Menús..."
+          class="w-full px-4 py-2 mb-4 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900"
+        />
+
+        <div class="overflow-y-auto h-96">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-blue-50">
+                <th class="p-2 w-10">#</th>
+                <th class="p-2 text-left">Lista de Menús</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let menu of menus" class="border-b border-blue-100 hover:bg-blue-50">
+                <td class="p-3 text-center">
+                  <input
+                    type="radio"
+                    name="menuSeleccionado"
+                    [value]="menu.codm"
+                    [(ngModel)]="menuSeleccionadoCodm"
+                    (change)="onMenuSelected()"
+                    class="accent-blue-900 h-5 w-5"
+                  />
+                </td>
+                <td class="p-3 font-medium">{{ menu.nombre }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-center items-center gap-3 mt-4" *ngIf="totalPaginasMenu > 1">
+          <button (click)="cambiarPaginaMenu(paginaActualMenu - 1)" [disabled]="paginaActualMenu === 1" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">‹</button>
+          <span>Pág {{ paginaActualMenu }} de {{ totalPaginasMenu }}</span>
+          <button (click)="cambiarPaginaMenu(paginaActualMenu + 1)" [disabled]="paginaActualMenu === totalPaginasMenu" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">›</button>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-lg border border-blue-900/10">
+        <h3 class="text-2xl font-bold text-blue-900 mb-4">Lista de Procesos</h3>
+
+        <div class="flex gap-4 mb-4">
+          <input
+            type="text"
+            [(ngModel)]="procesoFiltro"
+            (keyup.enter)="cargarProcesos()"
+            placeholder="Filtrar Procesos..."
+            class="flex-1 px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900"
+            [disabled]="!menuSeleccionadoCodm"
+          />
+
+          <div class="flex gap-3 items-center">
+            <label class="flex items-center gap-1">
+              <input type="radio" value="TODOS" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!menuSeleccionadoCodm"> Todos
+            </label>
+            <label class="flex items-center gap-1">
+              <input type="radio" value="SI" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!menuSeleccionadoCodm"> SI Asignados
+            </label>
+            <label class="flex items-center gap-1">
+              <input type="radio" value="NO" [(ngModel)]="filtroAsignado" (change)="onFiltroAsignadoChange()" name="filtroAsignado" class="accent-blue-900" [disabled]="!menuSeleccionadoCodm"> NO Asignados
+            </label>
+          </div>
+        </div>
+
+        <div class="overflow-y-auto h-96">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-blue-50">
+                <th class="p-2 w-10">#</th>
+                <th class="p-2 text-left">Lista de Procesos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="!menuSeleccionadoCodm">
+                <td colspan="2" class="p-6 text-center text-gray-500">
+                  Seleccione un Menú de la izquierda para ver los procesos.
+                </td>
+              </tr>
+
+              <tr *ngFor="let proceso of procesos" class="border-b border-blue-100 hover:bg-blue-50">
+                <td class="p-3 text-center">
+                  <input
+                    type="checkbox"
+                    [checked]="proceso.asignado"
+                    (change)="onProcesoToggle(proceso, $event)"
+                    class="accent-blue-900 h-5 w-5"
+                  />
+                </td>
+                <td class="p-3 font-medium">{{ proceso.nombre }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-center items-center gap-3 mt-4" *ngIf="totalPaginasProceso > 1">
+          <button (click)="cambiarPaginaProceso(paginaActualProceso - 1)" [disabled]="paginaActualProceso === 1" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">‹</button>
+          <span>Pág {{ paginaActualProceso }} de {{ totalPaginasProceso }}</span>
+          <button (click)="cambiarPaginaProceso(paginaActualProceso + 1)" [disabled]="paginaActualProceso === totalPaginasProceso" class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200">›</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

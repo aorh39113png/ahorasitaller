@@ -1,0 +1,72 @@
+<div class="fixed inset-0 bg-blue-950/60 flex items-center justify-center z-50 font-[Times_New_Roman]">
+  <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-blue-900/40">
+
+    <h3 class="text-2xl font-bold text-blue-900 mb-6 tracking-wide">
+      {{ modoEdicion ? 'Modificar Datos de Materias' : 'Adicionar Materias' }}
+    </h3>
+
+    <div class="space-y-4">
+
+      <div>
+        <label for="sigla" class="block text-left text-sm font-medium text-blue-900/80 mb-1">
+          Sigla:
+        </label>
+        <input
+          type="text"
+          id="sigla"
+          [(ngModel)]="materia.codmat"
+          [disabled]="modoEdicion"
+          placeholder="Ej: SIS-101"
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/50 bg-white
+                 disabled:bg-gray-100 disabled:text-gray-500"
+        />
+      </div>
+
+      <div>
+        <label for="nombreMateria" class="block text-left text-sm font-medium text-blue-900/80 mb-1">
+          Nombre Materia:
+        </label>
+        <input
+          type="text"
+          id="nombreMateria"
+          [(ngModel)]="materia.nombre"
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/50 bg-white"
+        />
+      </div>
+
+      <div>
+        <label for="nivel" class="block text-left text-sm font-medium text-blue-900/80 mb-1">
+          Nivel:
+        </label>
+        <select
+          id="nivel"
+          [(ngModel)]="materia.nivel.codn"
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none bg-white"
+        >
+          <option [value]="0" disabled>-- Seleccione un Nivel --</option>
+          <option *ngFor="let n of niveles" [value]="n.codn">
+            {{ n.nombre }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="flex justify-center gap-6 mt-8">
+      <button
+        (click)="guardar.emit(materia)"
+        [disabled]="materia.nivel.codn === 0"
+        class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg font-semibold tracking-wide shadow-md hover:shadow-lg transition duration-200
+               disabled:bg-gray-400"
+      >
+        {{ modoEdicion ? 'Modificar' : 'Guardar' }}
+      </button>
+      <button
+        (click)="cerrar.emit()"
+        class="bg-white border border-blue-900 text-blue-900 px-6 py-2.5 rounded-lg font-semibold tracking-wide hover:bg-blue-50 shadow-sm hover:shadow-md transition duration-200"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

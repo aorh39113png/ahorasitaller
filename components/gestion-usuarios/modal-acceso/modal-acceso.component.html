@@ -1,0 +1,45 @@
+<div class="fixed inset-0 bg-blue-950/60 flex items-center justify-center z-50 font-[Times_New_Roman]">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border border-blue-900/40">
+    <h2 class="text-2xl font-bold text-blue-900 mb-5 border-b-2 border-blue-800/40 pb-3 text-center tracking-wide">
+      {{ modoEdicion ? 'Modificar Datos de Acceso' : 'Asignar Datos de Acceso' }}
+    </h2>
+
+    <form class="space-y-5">
+      <input
+        [(ngModel)]="usuario.login"
+        name="login"
+        placeholder="Nombre del Usuario"
+        class="w-full px-4 py-2 border border-blue-800/50 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/60 font-[Times_New_Roman]"
+      />
+      <input
+        [(ngModel)]="usuario.password"
+        name="password"
+        type="password"
+        placeholder="Password"
+        class="w-full px-4 py-2 border border-blue-800/50 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/60 font-[Times_New_Roman]"
+      />
+      <input
+        [(ngModel)]="usuario.repetir"
+        name="repetir"
+        type="password"
+        placeholder="Repetir Password"
+        class="w-full px-4 py-2 border border-blue-800/50 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/60 font-[Times_New_Roman]"
+      />
+    </form>
+
+    <div class="flex justify-end gap-4 mt-8">
+      <button
+        (click)="guardar.emit()"
+        class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg font-semibold tracking-wide transition shadow-md hover:shadow-lg"
+      >
+        {{ modoEdicion ? 'Modificar' : 'Guardar' }}
+      </button>
+      <button
+        (click)="cerrar.emit()"
+        class="bg-white border border-blue-800 text-blue-900 px-6 py-2.5 rounded-lg font-semibold tracking-wide hover:bg-blue-50 transition shadow-sm hover:shadow-md"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

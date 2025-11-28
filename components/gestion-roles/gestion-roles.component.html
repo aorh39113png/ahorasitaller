@@ -1,0 +1,140 @@
+<div class="bg-gradient-to-b from-blue-50 to-white text-blue-900 py-12 px-6 rounded-xl shadow-lg font-[Times_New_Roman]">
+  <div class="max-w-5xl mx-auto">
+
+    <h2 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-6 border-b-4 border-blue-800/60 pb-2 tracking-tight">
+      Gestión Roles:
+    </h2>
+
+    <div class="flex flex-col md:flex-row items-center gap-4 mb-8 flex-wrap">
+
+      <div class="flex items-center gap-2 flex-1 w-full">
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          (keyup.enter)="onFiltroChange()"
+          placeholder="Filtrar por nombre del Rol..."
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none placeholder-blue-900/50 bg-white"
+        />
+      </div>
+
+      <div class="flex gap-4 items-center">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="TODOS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Todos</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="ACTIVOS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Activos</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="estadoFiltro" value="BAJAS" [(ngModel)]="filtroEstado" (change)="onEstadoChange()" class="accent-blue-900" />
+          <span class="font-medium">Bajas</span>
+        </label>
+      </div>
+
+      <button
+        (click)="abrirModalNuevo()"
+        class="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded-full shadow-md flex items-center gap-2 transition"
+      >
+        <i class="fa-solid fa-plus"></i>
+        <span class="hidden md:inline">Nuevo Rol</span>
+      </button>
+    </div>
+
+    <div class="overflow-x-auto shadow-xl rounded-xl ring-1 ring-blue-900/20">
+      <table class="w-full bg-white divide-y divide-blue-100">
+        <thead class="bg-blue-900/95">
+          <tr>
+            <th class="px-6 py-3 text-left text-white font-bold uppercase tracking-wide">Nombre del Rol</th>
+            <th class="px-6 py-3 text-center text-white font-bold uppercase tracking-wide">Estado</th>
+            <th class="px-6 py-3 text-center text-white font-bold uppercase tracking-wide">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-blue-100">
+          <tr *ngFor="let rol of roles" class="odd:bg-blue-50 even:bg-white hover:bg-blue-100/70 transition">
+
+            <td class="px-6 py-3 text-blue-950 font-medium">
+              {{ rol.nombre }}
+            </td>
+
+            <td class="px-6 py-3 text-center">
+              <i *ngIf="rol.estado === 1" class="fa-solid fa-thumbs-up text-green-600 fa-lg" title="Activo"></i>
+              <i *ngIf="rol.estado === 0" class="fa-solid fa-thumbs-down text-red-600 fa-lg" title="Inactivo"></i>
+            </td>
+
+            <td class="px-6 py-3 flex justify-center gap-3">
+              <button
+                *ngIf="rol.estado === 0"
+                title="Habilitar"
+                (click)="confirmarHabilitar(rol)"
+                class="p-2 rounded-full bg-blue-900 hover:bg-blue-800 text-white shadow-md transition"
+              >
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+
+              <button
+                *ngIf="rol.estado === 1"
+                title="Dar baja"
+                (click)="confirmarEliminar(rol)"
+                class="p-2 rounded-full bg-blue-900/90 hover:bg-blue-800 text-white shadow-md transition"
+              >
+                <i class="fa-solid fa-trash-can"></i> </button>
+
+              <button
+                title="Editar"
+                (click)="abrirModalEditar(rol)"
+                class="p-2 rounded-full bg-blue-800 hover:bg-blue-700 text-white shadow-md transition"
+              >
+                <i class="fa-solid fa-pen-to-square"></i> </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="flex justify-center items-center gap-3 mt-6 pb-6" *ngIf="totalPaginas > 1">
+        <button
+          (click)="cambiarPagina(paginaActual - 1)"
+          [disabled]="paginaActual === 1"
+          class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200 hover:bg-blue-800 transition"
+        >
+          ‹
+        </button>
+
+        <ng-container *ngFor="let pagina of [].constructor(totalPaginas); let i = index">
+          <button
+            (click)="cambiarPagina(i + 1)"
+            [class.bg-blue-900]="paginaActual === i + 1"
+            [class.text-white]="paginaActual === i + 1"
+            class="px-3 py-1 rounded-lg font-semibold bg-blue-100 text-blue-900 hover:bg-blue-200 transition"
+          >
+            {{ i + 1 }}
+          </button>
+        </ng-container>
+
+        <button
+          (click)="cambiarPagina(paginaActual + 1)"
+          [disabled]="paginaActual === totalPaginas"
+          class="px-3 py-1 bg-blue-900 text-white rounded-lg disabled:bg-blue-200 hover:bg-blue-800 transition"
+        >
+          ›
+        </button>
+      </div>
+    </div>
+
+    <app-modal-rol
+      *ngIf="modalRolVisible"
+      [modoEdicion]="modoEdicion"
+      [rolData]="rolSeleccionado!"
+      (cerrar)="cerrarModalRol()"
+      (guardar)="modoEdicion ? modificarRol($event) : guardarRol($event)"
+    ></app-modal-rol>
+
+    <app-modal-confirmacion
+      *ngIf="modalConfirmVisible"
+      [mensaje]="mensajeConfirmacion"
+      (cerrar)="cerrarModalConfirmacion()"
+      (aceptar)="ejecutarConfirmacion()">
+    </app-modal-confirmacion>
+
+  </div>
+</div>

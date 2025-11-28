@@ -1,0 +1,72 @@
+<div class="fixed inset-0 bg-blue-950/60 flex items-center justify-center z-50 font-[Times_New_Roman]">
+  <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg border border-blue-900/40">
+
+    <!-- Título del Modal -->
+    <h3 class="text-2xl font-bold text-blue-900 mb-6 tracking-wide">
+      {{ modoEdicion ? 'Modificar Asignación' : 'Adicionar Nueva Asignación' }}
+      <span class="text-gray-500 font-medium ml-2">(Gestión: {{ gestion }})</span>
+    </h3>
+
+    <!-- Formulario -->
+    <div class="space-y-4">
+
+      <!-- Dropdown: Nivel - Materia - Paralelo (B-16.1) -->
+      <div>
+        <label for="mapa" class="block text-left text-sm font-medium text-blue-900/80 mb-1">
+          Nivel - Materia - Paralelo:
+        </label>
+        <select
+          id="mapa"
+          [(ngModel)]="codMapaSeleccionado"
+
+
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none bg-white"
+        >
+          <option value="0" disabled>-- Seleccione Materia y Paralelo --</option>
+          <option *ngFor="let mapa of listaMapas" [value]="mapa.id.codmat + '|' + mapa.id.codpar">
+            ({{ mapa.materia.nivel.nombre }}) - {{ mapa.materia.nombre }} - [{{ mapa.paralelo.nombre }}]
+          </option>
+        </select>
+      </div>
+
+      <!-- Dropdown: Profesor (B-16.1) -->
+      <div>
+        <label for="profesor" class="block text-left text-sm font-medium text-blue-900/80 mb-1">
+          Profesor:
+        </label>
+        <select
+          id="profesor"
+          [(ngModel)]="codpSeleccionado"
+
+
+          class="w-full px-4 py-2 border border-blue-800/40 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-900 focus:outline-none bg-white"
+        >
+          <option [value]="0" disabled>-- Seleccione un Profesor --</option>
+          <option *ngFor="let p of listaProfesores" [value]="p.codp">
+            {{ p.ap }} {{ p.am }} {{ p.nombre }}
+          </option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- ✅ CORRECCIÓN: Botones actualizados para coincidir con el PDF (B-16.2) -->
+    <div class="flex justify-center gap-6 mt-8">
+      <button
+        (click)="onGuardar()"
+        [disabled]="codpSeleccionado === 0 || codMapaSeleccionado === '0'"
+        class="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg font-semibold tracking-wide shadow-md hover:shadow-lg transition duration-200
+               disabled:bg-gray-400"
+      >
+        <!-- El texto cambia si está en modo edición o creación -->
+        {{ modoEdicion ? 'Modificar' : 'Guardar' }}
+      </button>
+      <button
+        (click)="cerrar.emit()"
+        class="bg-white border border-blue-900 text-blue-900 px-6 py-2.5 rounded-lg font-semibold tracking-wide hover:bg-blue-50 shadow-sm hover:shadow-md transition duration-200"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
